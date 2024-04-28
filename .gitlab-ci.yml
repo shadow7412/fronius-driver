@@ -1,0 +1,21 @@
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
+services:
+  - docker:20.10.16-dind
+
+before_script:
+  - docker info
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - docker login -u $DOCKERHUB_REGISTRY_USER -p $DOCKERHUB_REGISTRY_PASSWORD
+
+build:
+  stage: build
+  image: docker:20.10.16
+  tags:
+  - docker_build
+  script:
+  - docker pull $CI_REGISTRY/steven/fronius-driver || true
+  - docker build --cache-from $DOCKER_URL/steven/fronius-driver -t $CI_REGISTRY/steven/fronius-driver -t shadowbert/fronius-driver .
+  - docker push $CI_REGISTRY/steven/fronius-driver
+  - docker push shadowbert/fronius-driver
