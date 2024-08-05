@@ -4,6 +4,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from requests import get
 from argparse import ArgumentParser
+from selenium.webdriver.support.select import Select
 
 parser = ArgumentParser(description="Syncs the value in a helper entity in home assistant to a fronius inverter's soft limit field.")
 
@@ -40,9 +41,9 @@ try:
         print("Setting to", desired_limit)
     # Ok, back to webdriver.
 
-    username = driver.find_element(By.TAG_NAME, "select").get_property("value")
+    username = Select(driver.find_element(By.TAG_NAME, "select"))
+    username.select_by_visible_text("service")
     password = driver.find_element(By.CSS_SELECTOR, "[type=password]")
-    assert username == 'string:service', username
     password.send_keys(args.fronius_password)
     password.send_keys(Keys.RETURN)
 
