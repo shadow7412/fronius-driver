@@ -47,7 +47,12 @@ try:
     password.send_keys(args.fronius_password)
     password.send_keys(Keys.RETURN)
 
-    limit = driver.find_element(By.CSS_SELECTOR, '[input-validator="softLimitValidator"]')
+    try:
+        limit = driver.find_element(By.CSS_SELECTOR, '[input-validator="softLimitValidator"]')
+    except TimeoutError:
+        driver.get(f"{args.fronius_url}/#/settings/evu")
+        limit = driver.find_element(By.CSS_SELECTOR, '[input-validator="softLimitValidator"]')
+
     current_limit = limit.get_property("value")
     print("Existing limit: ", current_limit)
     if current_limit == str(desired_limit):
