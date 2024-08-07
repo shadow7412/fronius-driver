@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 from requests import get
 from argparse import ArgumentParser
 from selenium.webdriver.support.select import Select
+from selenium.common.exceptions import NoSuchElementException
 
 parser = ArgumentParser(description="Syncs the value in a helper entity in home assistant to a fronius inverter's soft limit field.")
 
@@ -49,7 +50,7 @@ try:
 
     try:
         limit = driver.find_element(By.CSS_SELECTOR, '[input-validator="softLimitValidator"]')
-    except TimeoutError:
+    except NoSuchElementException:
         driver.get(f"{args.fronius_url}/#/settings/evu")
         limit = driver.find_element(By.CSS_SELECTOR, '[input-validator="softLimitValidator"]')
 
